@@ -48,6 +48,7 @@ export default function SignUp() {
           className="border p-3 rounded-lg"
           id="username"
           onChange={handleChange}
+          autoComplete="off"
         />
         <input
           type="email"
@@ -55,6 +56,7 @@ export default function SignUp() {
           className="border p-3 rounded-lg"
           id="email"
           onChange={handleChange}
+          autoComplete="off"
         />
         <input
           type="password"
@@ -62,6 +64,7 @@ export default function SignUp() {
           className="border p-3 rounded-lg"
           id="password"
           onChange={handleChange}
+          autoComplete="off"
         />
 
         <button
