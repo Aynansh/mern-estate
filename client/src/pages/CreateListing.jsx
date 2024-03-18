@@ -6,6 +6,9 @@ import {
   uploadBytesResumable,
 } from "firebase/storage";
 import { app } from "../firebase.js";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Button } from "@/components/ui/button.jsx";
+import { Input } from "@/components/ui/input.jsx";
 
 const CreateListing = () => {
   const [files, setFiles] = useState([]);
@@ -101,24 +104,24 @@ const CreateListing = () => {
             required
           />
           <div className="flex gap-6 flex-wrap">
-            <div className="flex gap-2">
-              <input type="checkbox" id="sale" className="w-5" />
+            <div className="flex items-center gap-2 ">
+              <Checkbox id="sell" />
               <span>Sell</span>
             </div>
-            <div className="flex gap-2">
-              <input type="checkbox" id="rent" className="w-5" />
+            <div className="flex items-center gap-2 ">
+              <Checkbox id="rent" />
               <span>Rent</span>
             </div>
-            <div className="flex gap-2">
-              <input type="checkbox" id="parking" className="w-5" />
+            <div className="flex items-center gap-2 ">
+              <Checkbox id="parking" />
               <span>Parking Spot</span>
             </div>
-            <div className="flex gap-2">
-              <input type="checkbox" id="furnished" className="w-5" />
+            <div className="flex items-center gap-2 ">
+              <Checkbox id="furnished" />
               <span>Furnished</span>
             </div>
-            <div className="flex gap-2">
-              <input type="checkbox" id="offer" className="w-5" />
+            <div className="flex items-center gap-2 ">
+              <Checkbox id="offer" />
               <span>Offer</span>
             </div>
           </div>
@@ -182,17 +185,17 @@ const CreateListing = () => {
               The first image will be the cover (max 6)
             </span>
           </div>
-          <div className="flex gap-4">
-            <input
+          <div className="flex gap-4 items-center">
+            <Input
               onChange={(e) => {
                 setFiles(e.target.files);
               }}
-              className="p-3 border border-gray-300 rounded w-full"
-              type="file"
               id="images"
               accept="image/*"
               multiple
+              type="file"
             />
+
             <button
               type="button"
               disabled={uploading}
@@ -226,9 +229,7 @@ const CreateListing = () => {
                 </button>
               </div>
             ))}
-          <button className="text-white bg-black focus:ring-4 focus:ring-[#4285F4]/50 font-medium rounded-lg px-5 py-2.5 text-center inline-flex items-center dark:focus:ring-[#4285F4]/55 mr-2 mb-2 justify-center hover:opacity-75">
-            Create List
-          </button>
+          <Button variant="outline">Create List</Button>
         </div>
       </form>
     </main>

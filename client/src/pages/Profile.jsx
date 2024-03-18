@@ -19,6 +19,7 @@ import {
   signoutUserSucess,
   signoutUserFailed,
 } from "../redux/user/userSlice";
+import { Button } from "@/components/ui/button";
 
 const Profile = () => {
   const fileRef = useRef(null);
@@ -177,12 +178,9 @@ const Profile = () => {
           className="border m-2 p-3 rounded-lg"
           onChange={handleChange}
         />
-        <button
-          disabled={loading}
-          className="bg-black text-white rounded-lg m-2 p-3 hover:opacity-95 disabled:opacity-80"
-        >
+        <Button disabled={loading} variant="outline" className="m-2 h-12">
           {loading ? "Loading.." : "Update"}
-        </button>
+        </Button>
         <Link
           to={"/create-listing"}
           className="m-2 bg-[#4285F4] hover:bg-[#4285F4]/90 focus:ring-4 focus:ring-[#4285F4]/50 font-medium rounded-lg px-5 py-2.5 text-center items-center dark:focus:ring-[#4285F4]/55 text-white"
