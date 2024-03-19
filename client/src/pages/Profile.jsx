@@ -282,7 +282,9 @@ const Profile = () => {
       </div>
       <div className="text-center">
         <p className="text-red-600">
-          {showlistingserror ? "Error showing listing" : ""}
+          {showlistingserror
+            ? "Error showing listing (try signing out and signing in again)"
+            : ""}
         </p>
       </div>
 

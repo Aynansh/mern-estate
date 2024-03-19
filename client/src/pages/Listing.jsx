@@ -1,9 +1,20 @@
 import React, { useEffect, useState, useCallback } from "react";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import useEmblaCarousel from "embla-carousel-react";
 import { MdNavigateBefore, MdNavigateNext } from "react-icons/md"; // Import Material Icons
 import Autoplay from "embla-carousel-autoplay";
 import { Button } from "@/components/ui/button";
+import {
+  FaBath,
+  FaBed,
+  FaChair,
+  FaMapMarkerAlt,
+  FaParking,
+  FaShare,
+} from "react-icons/fa";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { Terminal } from "lucide-react";
+import { useSelector } from "react-redux";
 
 const Listing = () => {
   const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true }, [
@@ -15,6 +26,9 @@ const Listing = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
+  const [copied, setCopied] = useState(false);
+  const [listingOwner, setListingOwner] = useState(null);
+  const { currentUser } = useSelector((state) => state.user);
 
   const onButtonAutoplayClick = useCallback(
     (callback) => {
@@ -54,6 +68,7 @@ const Listing = () => {
           return;
         }
         setListing(data);
+        setListingOwner(data.userRef);
         setLoading(false);
       } catch (error) {
         setError(true);
@@ -96,7 +111,7 @@ const Listing = () => {
         </p>
       )}
       {listing && !loading && !error && (
-        <>
+        <div>
           <div className="embla relative" ref={emblaRef}>
             <div className="embla__container">
               {listing.imageUrls.map((url, index) => (
@@ -167,7 +182,99 @@ const Listing = () => {
               <MdNavigateNext size={40} /> {/* Material Icon for "Next" */}
             </button>
           </div>
-        </>
+          <div className="fixed bottom-4 right-4 z-10 border rounded-full w-12 h-12 flex justify-center items-center bg-slate-100 cursor-pointer">
+            <FaShare
+              className="text-slate-500"
+              onClick={() => {
+                navigator.clipboard.writeText(window.location.href);
+                setCopied(true);
+                setTimeout(() => {
+                  setCopied(false);
+                }, 2000);
+              }}
+            />
+          </div>
+          {copied && (
+            <Alert className="fixed top-4 left-1/2 transform -translate-x-1/2 z-10 rounded-md bg-black text-white w-auto inline-flex flex-col justify-center items-center p-2">
+              <AlertTitle className="text-center">Link copied!</AlertTitle>
+              <AlertDescription className="text-center">
+                The link has been copied to the clipboard.
+              </AlertDescription>
+            </Alert>
+          )}
+          <div className="flex flex-col max-w-full mx-4 p-3 my-7 gap-3">
+            <p className="text-2xl font-semibold flex gap-4">
+              {listing.name} - ${" "}
+              {listing.offer
+                ? listing.discountedPrice.toLocaleString("en-US")
+                : listing.regularPrice.toLocaleString("en-US")}
+              {listing.type === "rent" && " / month"}
+              {listingOwner === currentUser._id && (
+                <Link to={`/update-listing/${listing._id}`}>
+                  <Button variant="outline" className="rounded-full">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      viewBox="0 0 24 24"
+                      fill="currentColor"
+                      class="w-4 h-4"
+                    >
+                      <path d="M21.731 2.269a2.625 2.625 0 0 0-3.712 0l-1.157 1.157 3.712 3.712 1.157-1.157a2.625 2.625 0 0 0 0-3.712ZM19.513 8.199l-3.712-3.712-12.15 12.15a5.25 5.25 0 0 0-1.32 2.214l-.8 2.685a.75.75 0 0 0 .933.933l2.685-.8a5.25 5.25 0 0 0 2.214-1.32L19.513 8.2Z" />
+                    </svg>
+                  </Button>
+                </Link>
+              )}
+            </p>
+            <p className="flex items-center mt-2 gap-2 text-slate-600  text-sm">
+              <FaMapMarkerAlt className="text-green-700" />
+              {listing.address}
+            </p>
+            <div className="flex gap-4 mb-3">
+              <p className="bg-red-900 w-full max-w-[200px] text-white text-center p-1 rounded-md">
+                {listing.type === "rent" ? "For Rent" : "For Sale"}
+              </p>
+              {listing.offer && (
+                <p className="bg-green-900 w-full max-w-[200px] text-white text-center p-1 rounded-md">
+                  ${+listing.regularPrice - +listing.discountedPrice} Discount
+                </p>
+              )}
+            </div>
+            <p className="text-slate-800 mb-2">
+              <span className="font-semibold text-black">Description - </span>
+              {listing.description}
+            </p>
+            <ul className="text-green-900 font-semibold text-sm flex flex-wrap items-center gap-4 sm:gap-6">
+              <li className="flex items-center gap-1 whitespace-nowrap ">
+                <FaBed className="text-lg" />
+                {listing.bedRooms > 1
+                  ? `${listing.bedRooms} beds `
+                  : `${listing.bedRooms} bed `}
+              </li>
+              <li className="flex items-center gap-1 whitespace-nowrap ">
+                <FaBath className="text-lg" />
+                {listing.bathRooms > 1
+                  ? `${listing.bathRooms} baths `
+                  : `${listing.bathRooms} bath `}
+              </li>
+              <li
+                className={`flex items-center gap-1 whitespace-nowrap ${
+                  listing.parking ? "" : "text-red-500"
+                }`}
+              >
+                <FaParking className="text-lg" />
+                {listing.parking ? "Parking spot" : "No Parking"}
+              </li>
+
+              <li
+                className={`flex items-center gap-1 whitespace-nowrap ${
+                  listing.furnished ? "" : "text-red-500"
+                }`}
+              >
+                <FaChair className="text-lg" />
+                {listing.furnished ? "Furnished" : "Unfurnished"}
+              </li>
+            </ul>
+          </div>
+        </div>
       )}
     </main>
   );
