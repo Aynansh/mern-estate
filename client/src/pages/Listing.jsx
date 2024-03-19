@@ -15,6 +15,7 @@ import {
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Terminal } from "lucide-react";
 import { useSelector } from "react-redux";
+import Contact from "@/components/Contact.jsx";
 
 const Listing = () => {
   const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true }, [
@@ -29,6 +30,7 @@ const Listing = () => {
   const [copied, setCopied] = useState(false);
   const [listingOwner, setListingOwner] = useState(null);
   const { currentUser } = useSelector((state) => state.user);
+  const [contact, setContact] = useState(false);
 
   const onButtonAutoplayClick = useCallback(
     (callback) => {
@@ -182,9 +184,9 @@ const Listing = () => {
               <MdNavigateNext size={40} /> {/* Material Icon for "Next" */}
             </button>
           </div>
-          <div className="fixed bottom-4 right-4 z-10 border rounded-full w-12 h-12 flex justify-center items-center bg-slate-100 cursor-pointer">
+          <div className="fixed bottom-4 right-4 z-10 border border-gray-400 rounded-full w-12 h-12 flex justify-center items-center bg-white cursor-pointer">
             <FaShare
-              className="text-slate-500"
+              className="text-black"
               onClick={() => {
                 navigator.clipboard.writeText(window.location.href);
                 setCopied(true);
@@ -207,7 +209,7 @@ const Listing = () => {
               {listing.name} - ₹{""}
               {listing.regularPrice.toLocaleString("en-US")}
               {listing.type === "rent" && " / month"}
-              {listingOwner === currentUser._id && (
+              {currentUser && listingOwner === currentUser._id && (
                 <Link to={`/update-listing/${listing._id}`}>
                   <Button variant="outline" className="rounded-full">
                     <svg
@@ -237,11 +239,13 @@ const Listing = () => {
               )}
             </div>
             <div className="text-slate-800 mb-2">
-              <span className="font-semibold text-black">Description - </span>
+              <span className="font-bold text-black underline">
+                Description
+              </span>
               <p className="text-justify hyphens-auto">{listing.description}</p>
             </div>
 
-            <ul className="text-green-900 font-semibold text-sm flex flex-wrap items-center gap-4 sm:gap-6">
+            <ul className="text-green-900 font-semibold text-sm flex flex-wrap items-center gap-4 sm:gap-6 mb-6">
               <li className="flex items-center gap-1 whitespace-nowrap ">
                 <FaBed className="text-lg" />
                 {listing.bedRooms > 1
@@ -272,6 +276,16 @@ const Listing = () => {
                 {listing.furnished ? "Furnished" : "Unfurnished"}
               </li>
             </ul>
+            {currentUser && listingOwner !== currentUser._id && !contact && (
+              <Button
+                onClick={() => setContact(true)}
+                className="w-full"
+                variant="outline"
+              >
+                Contact landlord
+              </Button>
+            )}
+            {contact && <Contact listing={listing} />}
           </div>
         </div>
       )}
