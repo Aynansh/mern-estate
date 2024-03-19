@@ -1,17 +1,16 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { Swiper, SwiperSlide } from "swiper/react";
-import SwiperCore from "swiper";
-import { Navigation } from "swiper/modules";
-import "swiper/css/bundle";
+import useEmblaCarousel from "embla-carousel-react";
+import { MdNavigateBefore, MdNavigateNext } from "react-icons/md"; // Import Material Icons
 
 const Listing = () => {
-  SwiperCore.use([Navigation]);
+  const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true });
+
   const params = useParams();
   const [listing, setListing] = useState(null);
   const [loading, setLoading] = useState(true);
-
   const [error, setError] = useState(false);
+
   useEffect(() => {
     const fetchListing = async () => {
       try {
@@ -34,10 +33,18 @@ const Listing = () => {
       }
     };
     fetchListing();
-  }, []);
-  console.log(listing);
+  }, [params.listingId]);
+
+  const scrollPrev = () => {
+    if (emblaApi) emblaApi.scrollPrev();
+  };
+
+  const scrollNext = () => {
+    if (emblaApi) emblaApi.scrollNext();
+  };
+
   return (
-    <main>
+    <main className="relative">
       {loading && <p className="text-center text-2xl my-7">Loading...</p>}
       {error && (
         <p className="text-center text-2xl my-7 text-red-600">
@@ -46,19 +53,33 @@ const Listing = () => {
       )}
       {listing && !loading && !error && (
         <>
-          <Swiper navigation>
-            {listing.imageUrls.map((url) => (
-              <SwiperSlide key={url}>
+          <div className="embla" ref={emblaRef}>
+            <div className="embla__container">
+              {listing.imageUrls.map((url, index) => (
                 <div
-                  className="h-[500px]"
+                  className="embla__slide"
+                  key={index}
                   style={{
-                    background: `url(${url}) center no-repeat`,
+                    backgroundImage: `url(${url})`,
+                    backgroundPosition: "center",
                     backgroundSize: "cover",
                   }}
                 ></div>
-              </SwiperSlide>
-            ))}
-          </Swiper>
+              ))}
+            </div>
+          </div>
+          <button
+            className="embla__prev absolute top-1/2 left-0 transform -translate-y-1/2 bg-white rounded-full m-2"
+            onClick={scrollPrev}
+          >
+            <MdNavigateBefore size={40} /> {/* Material Icon for "Prev" */}
+          </button>
+          <button
+            className="embla__next absolute top-1/2 right-0 transform -translate-y-1/2  bg-white rounded-full m-2"
+            onClick={scrollNext}
+          >
+            <MdNavigateNext size={40} /> {/* Material Icon for "Next" */}
+          </button>
         </>
       )}
     </main>

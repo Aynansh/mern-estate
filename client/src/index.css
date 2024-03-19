@@ -75,3 +75,18 @@
     background-color: rgb(240, 245, 240);
   }
 }
+
+.embla {
+  overflow: hidden;
+}
+.embla__container {
+  display: flex;
+}
+.embla__slide {
+  display: flex;
+  align-items: center; /* Center content vertically */
+  justify-content: center; /* Center content horizontally */
+  flex: 0 0 100%;
+  min-width: 0;
+  height: 550px; /* Set height to 550 pixels */
+}
