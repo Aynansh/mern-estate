@@ -167,6 +167,7 @@ const CreateListing = () => {
             maxLength="62"
             minLength="10"
             required
+            autoComplete="off"
             onChange={handleChange}
             value={formData.name}
           />
@@ -185,6 +186,7 @@ const CreateListing = () => {
             id="address"
             className="border border-gray-300 p-3 rounded-lg"
             required
+            autoComplete="off"
             onChange={handleChange}
             value={formData.address}
           />

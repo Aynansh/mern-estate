@@ -20,7 +20,17 @@ import {
   signoutUserFailed,
 } from "../redux/user/userSlice";
 import { Button } from "@/components/ui/button";
-import { ReducerType } from "@reduxjs/toolkit";
+import {
+  AlertDialog,
+  AlertDialogTrigger,
+  AlertDialogContent,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogAction,
+  AlertDialogCancel,
+} from "@/components/ui/alert-dialog";
 
 const Profile = () => {
   const fileRef = useRef(null);
@@ -231,9 +241,28 @@ const Profile = () => {
         </Link>
       </form>
       <div className="flex justify-between m-2">
-        <span onClick={handleDelete} className="text-red-700 cursor-pointer">
-          Delete account
-        </span>
+        <AlertDialog>
+          <AlertDialogTrigger>
+            <span className="text-red-700 cursor-pointer hover:underline">
+              Delete account
+            </span>
+          </AlertDialogTrigger>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Delete Account</AlertDialogTitle>
+            </AlertDialogHeader>
+            <AlertDialogDescription>
+              Are you sure you want to delete your account? This action cannot
+              be undone.
+            </AlertDialogDescription>
+            <AlertDialogFooter>
+              <AlertDialogCancel>Cancel</AlertDialogCancel>
+              <AlertDialogAction onClick={handleDelete}>
+                Delete
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
         <span onClick={handleSignout} className="text-red-700 cursor-pointer">
           Sign out
         </span>
@@ -246,7 +275,7 @@ const Profile = () => {
         <Button
           variant="outline"
           onClick={handleShowListings}
-          className="bg-gray-500 m-2"
+          className="bg-gray-500 m-2 text-white hover:bg-white"
         >
           {showListing ? "Hide Listings" : "Show Listings"}
         </Button>
@@ -282,13 +311,29 @@ const Profile = () => {
                   <p className="">{listing.name}</p>
                 </Link>
                 <div className="flex flex-col">
-                  <Button
-                    onClick={() => handleListingDelete(listing._id)}
-                    variant="link"
-                    className="text-red-600"
-                  >
-                    Delete
-                  </Button>
+                  <AlertDialog>
+                    <AlertDialogTrigger>
+                      <Button variant="link" className="text-red-600">
+                        Delete
+                      </Button>
+                    </AlertDialogTrigger>
+                    <AlertDialogContent>
+                      <AlertDialogHeader>
+                        <AlertDialogTitle>Confirm Deletion</AlertDialogTitle>
+                      </AlertDialogHeader>
+                      <AlertDialogDescription>
+                        Are you sure you want to delete this listing?
+                      </AlertDialogDescription>
+                      <AlertDialogFooter>
+                        <AlertDialogCancel>Cancel</AlertDialogCancel>
+                        <AlertDialogAction
+                          onClick={() => handleListingDelete(listing._id)}
+                        >
+                          Delete
+                        </AlertDialogAction>
+                      </AlertDialogFooter>
+                    </AlertDialogContent>
+                  </AlertDialog>
                   <Button variant="link" className="text-blue-400">
                     Edit
                   </Button>
