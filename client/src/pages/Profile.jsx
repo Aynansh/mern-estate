@@ -29,8 +29,9 @@ const Profile = () => {
   const [fileUploadError, setFileUploadError] = useState(false);
   const [formData, setformData] = useState({});
   const [updatestatus, setupdatestatus] = useState(false);
+  const [showlistingserror, setshowlistingerror] = useState(false);
   const dispatch = useDispatch();
-
+  const [userListings, setuserListings] = useState([]);
   useEffect(() => {
     if (file) {
       // Corrected condition, it should execute handleFileUpload if file exists
@@ -122,6 +123,22 @@ const Profile = () => {
     }
   };
 
+  const handleShowListings = async () => {
+    try {
+      setshowlistingerror(false);
+      const res = await fetch(`/api/user/listings/${currentUser._id}`);
+      const data = await res.json();
+      if (data.success === false) {
+        setshowlistingerror(data.message);
+        return;
+      }
+      setshowlistingerror(false);
+      setuserListings(data);
+    } catch (error) {
+      setshowlistingerror(error.message);
+    }
+  };
+
   return (
     <div className="p-3 max-w-lg mx-auto">
       <h1 className="text-3xl font-semibold text-center my-7">Profile</h1>
@@ -200,6 +217,55 @@ const Profile = () => {
       <p className="text-green-600 m-2">
         {updatestatus ? "User updated successfully!" : ""}
       </p>
+      <div className="flex justify-center">
+        <Button
+          variant="outline"
+          onClick={handleShowListings}
+          className="bg-gray-500 m-2"
+        >
+          Show listings
+        </Button>
+      </div>
+      <div className="text-center">
+        <p className="text-red-600">
+          {showlistingserror ? "Error showing listing" : ""}
+        </p>
+      </div>
+      <div className="flex flex-col gap-4">
+        <h1 className="text-center mt-7 text-2xl font-semibold">
+          Your Listings
+        </h1>
+        {userListings &&
+          userListings.length > 0 &&
+          userListings.map((listing) => (
+            <div
+              key={listing._id}
+              className="border rounded-lg border-gray-400 p-3 flex gap-2 justify-between items-center m-2"
+            >
+              <Link to={`/listing/${listing._id}`}>
+                <img
+                  src={listing.imageUrls[0]}
+                  alt="listing cover"
+                  className="h-16 w-16 object-contain"
+                />
+              </Link>
+              <Link
+                className="text-slate-700 font-semibold hover:underline truncate flex-1"
+                to={`/listings/${listing._id}`}
+              >
+                <p className="">{listing.name}</p>
+              </Link>
+              <div className="flex flex-col">
+                <Button variant="link" className="text-red-600">
+                  Delete
+                </Button>
+                <Button variant="link" className="text-blue-400">
+                  Edit
+                </Button>
+              </div>
+            </div>
+          ))}
+      </div>
     </div>
   );
 };
