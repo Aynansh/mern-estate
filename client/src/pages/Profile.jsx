@@ -20,6 +20,7 @@ import {
   signoutUserFailed,
 } from "../redux/user/userSlice";
 import { Button } from "@/components/ui/button";
+import { ReducerType } from "@reduxjs/toolkit";
 
 const Profile = () => {
   const fileRef = useRef(null);
@@ -32,6 +33,8 @@ const Profile = () => {
   const [showlistingserror, setshowlistingerror] = useState(false);
   const dispatch = useDispatch();
   const [userListings, setuserListings] = useState([]);
+  const [showListing, setShowListing] = useState(false);
+  const [deleteListingError, setdeleteListingError] = useState(false);
   useEffect(() => {
     if (file) {
       // Corrected condition, it should execute handleFileUpload if file exists
@@ -126,6 +129,7 @@ const Profile = () => {
   const handleShowListings = async () => {
     try {
       setshowlistingerror(false);
+      setShowListing(!showListing);
       const res = await fetch(`/api/user/listings/${currentUser._id}`);
       const data = await res.json();
       if (data.success === false) {
@@ -136,6 +140,27 @@ const Profile = () => {
       setuserListings(data);
     } catch (error) {
       setshowlistingerror(error.message);
+    }
+  };
+
+  const handleListingDelete = async (id) => {
+    try {
+      setdeleteListingError(false);
+      const res = await fetch(`/api/listing/delete/${id}`, {
+        method: "DELETE",
+      });
+      const data = await res.json();
+      if (data.success === false) {
+        setdeleteListingError(data.message);
+        return;
+      }
+      // Update userListings state immutably by filtering out the deleted listing
+      setuserListings((prevListings) =>
+        prevListings.filter((listing) => listing._id !== id)
+      );
+      setdeleteListingError(false);
+    } catch (error) {
+      setdeleteListingError(error.message);
     }
   };
 
@@ -223,7 +248,7 @@ const Profile = () => {
           onClick={handleShowListings}
           className="bg-gray-500 m-2"
         >
-          Show listings
+          {showListing ? "Hide Listings" : "Show Listings"}
         </Button>
       </div>
       <div className="text-center">
@@ -231,41 +256,47 @@ const Profile = () => {
           {showlistingserror ? "Error showing listing" : ""}
         </p>
       </div>
-      <div className="flex flex-col gap-4">
-        <h1 className="text-center mt-7 text-2xl font-semibold">
-          Your Listings
-        </h1>
-        {userListings &&
-          userListings.length > 0 &&
-          userListings.map((listing) => (
-            <div
-              key={listing._id}
-              className="border rounded-lg border-gray-400 p-3 flex gap-2 justify-between items-center m-2"
-            >
-              <Link to={`/listing/${listing._id}`}>
-                <img
-                  src={listing.imageUrls[0]}
-                  alt="listing cover"
-                  className="h-16 w-16 object-contain"
-                />
-              </Link>
-              <Link
-                className="text-slate-700 font-semibold hover:underline truncate flex-1"
-                to={`/listings/${listing._id}`}
+
+      {showListing && userListings && (
+        <div className="flex flex-col gap-2">
+          <h1 className="text-center my-4 mt-7 text-2xl font-semibold">
+            Your Listings
+          </h1>
+          {userListings.length > 0 &&
+            userListings.map((listing) => (
+              <div
+                key={listing._id}
+                className="border rounded-lg border-gray-400 p-3 flex gap-1 justify-between items-center m-2"
               >
-                <p className="">{listing.name}</p>
-              </Link>
-              <div className="flex flex-col">
-                <Button variant="link" className="text-red-600">
-                  Delete
-                </Button>
-                <Button variant="link" className="text-blue-400">
-                  Edit
-                </Button>
+                <Link to={`/listing/${listing._id}`}>
+                  <img
+                    src={listing.imageUrls[0]}
+                    alt="listing cover"
+                    className="h-16 w-16 object-contain"
+                  />
+                </Link>
+                <Link
+                  className="text-slate-700 font-semibold hover:underline truncate flex-1"
+                  to={`/listings/${listing._id}`}
+                >
+                  <p className="">{listing.name}</p>
+                </Link>
+                <div className="flex flex-col">
+                  <Button
+                    onClick={() => handleListingDelete(listing._id)}
+                    variant="link"
+                    className="text-red-600"
+                  >
+                    Delete
+                  </Button>
+                  <Button variant="link" className="text-blue-400">
+                    Edit
+                  </Button>
+                </div>
               </div>
-            </div>
-          ))}
-      </div>
+            ))}
+        </div>
+      )}
     </div>
   );
 };
