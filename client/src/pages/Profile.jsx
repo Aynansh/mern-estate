@@ -336,11 +336,10 @@ const Profile = () => {
                       </AlertDialogFooter>
                     </AlertDialogContent>
                   </AlertDialog>
-                  <Link to={`/update-listing/${listing._id}`}>
-                    <Button variant="link" className="text-blue-400">
-                      Edit
-                    </Button>
-                  </Link>
+
+                  <Button asChild variant="link" className="text-blue-400">
+                    <Link to={`/update-listing/${listing._id}`}>Edit</Link>
+                  </Button>
                 </div>
               </div>
             ))}
