@@ -4,14 +4,7 @@ import useEmblaCarousel from "embla-carousel-react";
 import { MdNavigateBefore, MdNavigateNext } from "react-icons/md"; // Import Material Icons
 import Autoplay from "embla-carousel-autoplay";
 import { Button } from "@/components/ui/button";
-import {
-  FaBath,
-  FaBed,
-  FaChair,
-  FaMapMarkerAlt,
-  FaParking,
-  FaShare,
-} from "react-icons/fa";
+import { FaBath, FaBed, FaChair, FaParking, FaShare } from "react-icons/fa";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Terminal } from "lucide-react";
 import { useSelector } from "react-redux";
