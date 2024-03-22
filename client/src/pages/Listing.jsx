@@ -24,7 +24,6 @@ const Listing = () => {
 
   const params = useParams();
   const [listing, setListing] = useState(null);
-  console.log(listing?.imageUrls);
   const [loading, setLoading] = useState(true);
   const [coverImage, setCoverImage] = useState("");
   const [error, setError] = useState(false);
@@ -248,7 +247,7 @@ const Listing = () => {
                 </Link>
               )}
             </p>
-            <p className="flex items-center mt-2 gap-2 text-slate-600  text-sm">
+            <div className="flex items-center mt-2 gap-2 text-slate-600 text-sm ">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 viewBox="0 0 24 24"
@@ -262,8 +261,8 @@ const Listing = () => {
                 />
               </svg>
 
-              {listing.address}
-            </p>
+              <p className="w-full">{listing.address}</p>
+            </div>
             <div className="flex gap-4 mb-3">
               <p className="bg-red-900 w-full max-w-[200px] text-white text-center p-1 rounded-md">
                 {listing.type === "rent" ? "For Rent" : "For Sale"}

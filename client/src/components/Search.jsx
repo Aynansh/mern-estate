@@ -4,6 +4,7 @@ import { Button } from "./ui/button";
 import { MenuItem, Select } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import ListingItem from "./ListingItem";
+import ScrollToTop from "react-scroll-to-top";
 const Search = () => {
   const navigate = useNavigate();
   const [sidebardata, setsidebardata] = useState({
@@ -18,6 +19,7 @@ const Search = () => {
 
   const [loading, setLoading] = useState(false);
   const [listing, setListing] = useState([]);
+  const [showMore, setshowMore] = useState(false);
 
   useEffect(() => {
     const urlParams = new URLSearchParams(location.search);
@@ -41,9 +43,15 @@ const Search = () => {
 
     const fetchListings = async () => {
       setLoading(true);
+      setshowMore(false);
       const searchQuery = urlParams.toString();
       const res = await fetch(`/api/listing/get?${searchQuery}`);
       const data = await res.json();
+      if (data.length > 8) {
+        setshowMore(true);
+      } else {
+        setshowMore(false);
+      }
       setListing(data);
       setLoading(false);
     };
@@ -83,6 +91,20 @@ const Search = () => {
     urlParams.set("order", sidebardata.order);
     const searchQuery = urlParams.toString();
     navigate(`/search?${searchQuery}`);
+  };
+
+  const onShowMoreClick = async () => {
+    const numberofListings = listing.length;
+    const startIndex = numberofListings;
+    const urlParams = new URLSearchParams(location.search);
+    urlParams.set("startIndex", startIndex);
+    const searchQuery = urlParams.toString();
+    const res = await fetch(`/api/listing/get?${searchQuery}`);
+    const data = await res.json();
+    if (data.length < 9) {
+      setshowMore(false);
+    }
+    setListing([...listing, ...data]);
   };
 
   return (
@@ -197,8 +219,42 @@ const Search = () => {
             listing.map((list) => (
               <ListingItem key={list._id} listing={list} />
             ))}
+          <div className="w-full flex justify-center">
+            {showMore && (
+              <Button
+                className="m-2"
+                onClick={() => onShowMoreClick()}
+                variant="outline"
+              >
+                Show more
+              </Button>
+            )}
+          </div>
         </div>
       </div>
+      <ScrollToTop
+        smooth
+        className="flex items-center justify-center rounded-full bg-black text-white "
+        component={
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 24 24"
+            fill="currentColor"
+            class="w-6 h-6"
+          >
+            <path
+              fill-rule="evenodd"
+              d="M11.47 10.72a.75.75 0 0 1 1.06 0l7.5 7.5a.75.75 0 1 1-1.06 1.06L12 12.31l-6.97 6.97a.75.75 0 0 1-1.06-1.06l7.5-7.5Z"
+              clip-rule="evenodd"
+            />
+            <path
+              fill-rule="evenodd"
+              d="M11.47 4.72a.75.75 0 0 1 1.06 0l7.5 7.5a.75.75 0 1 1-1.06 1.06L12 6.31l-6.97 6.97a.75.75 0 0 1-1.06-1.06l7.5-7.5Z"
+              clip-rule="evenodd"
+            />
+          </svg>
+        }
+      />
     </div>
   );
 };

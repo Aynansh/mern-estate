@@ -289,7 +289,7 @@ const UpdateListing = () => {
                 type="number"
                 id="regularPrice"
                 min="50"
-                max="100000"
+                max="10000000"
                 required
                 className="p-3 border border-gray-300 rounded-lg"
                 onChange={handleChange}
@@ -308,7 +308,7 @@ const UpdateListing = () => {
                   type="number"
                   id="discountedPrice"
                   min="0"
-                  max="100000"
+                  max="10000000"
                   required
                   className="p-3 border border-gray-300 rounded-lg"
                   onChange={handleChange}

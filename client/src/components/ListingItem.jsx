@@ -8,7 +8,7 @@ const ListingItem = ({ listing }) => {
   return (
     <div>
       <Link to={`/listing/${listing._id}`}>
-        <Card className="bg-white rounded-lg overflow-hidden hover:shadow-md hover:shadow-gray-500 transition-shadow duration-300 w-full sm:w-[260px] ">
+        <Card className="bg-white rounded-lg overflow-hidden hover:shadow-md hover:shadow-gray-500 transition-shadow duration-300 w-full sm:w-[260px] min-h-[400px] max-h-[400px] ">
           <CardMedia
             component="img"
             image={
