@@ -1,14 +1,31 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import CardMedia from "@mui/material/CardMedia";
 import { Link } from "react-router-dom";
 
 const ListingItem = ({ listing }) => {
+  const [isSmallScreen, setIsSmallScreen] = useState(window.innerWidth < 768);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsSmallScreen(window.innerWidth < 768);
+    };
+
+    window.addEventListener("resize", handleResize);
+
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, []);
   return (
-    <div>
+    <div className={isSmallScreen ? "w-full overflow-hidden" : ""}>
       <Link to={`/listing/${listing._id}`}>
-        <Card className="bg-white rounded-lg overflow-hidden hover:shadow-md hover:shadow-gray-500 transition-shadow duration-300 w-full sm:w-[260px] min-h-[400px] max-h-[400px] ">
+        <Card
+          className={`bg-white rounded-lg overflow-hidden hover:shadow-md hover:shadow-gray-500 transition-shadow duration-300 ${
+            isSmallScreen ? "w-full h-full" : "sm:w-[260px] max-h-[400px]"
+          } min-h-[400px] `}
+        >
           <CardMedia
             component="img"
             image={
@@ -20,7 +37,7 @@ const ListingItem = ({ listing }) => {
                 "https://firebasestorage.googleapis.com/v0/b/mern-estate-80335.appspot.com/o/error.png?alt=media&token=595af8b8-23cf-4295-8dbf-10675c6b8958";
             }}
             alt="listing-cover"
-            className="h-[320px] sm:h-[200px] w-full object-cover hover:scale-105 hover:ease-in-out duration-300"
+            className="h-[320px] sm:h-[200px] object-cover hover:scale-105 hover:ease-in-out duration-300"
           />
 
           <CardContent className="flex flex-col gap-2">
