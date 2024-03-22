@@ -3,6 +3,7 @@ import { Checkbox } from "./ui/checkbox";
 import { Button } from "./ui/button";
 import { MenuItem, Select } from "@mui/material";
 import { useNavigate } from "react-router-dom";
+import ListingItem from "./ListingItem";
 const Search = () => {
   const navigate = useNavigate();
   const [sidebardata, setsidebardata] = useState({
@@ -177,10 +178,26 @@ const Search = () => {
           <Button variant="outline">Search</Button>
         </form>
       </div>
-      <div>
+      <div className="flex-1">
         <h1 className="text-3xl font-semibold border-b p-3 text-slate-700">
           Search results:
         </h1>
+        <div className="p-3 flex flex-wrap gap-4 ">
+          {!loading && listing.length === 0 && (
+            <p className="text-xl text-black">No listings found!!</p>
+          )}
+          {loading && (
+            <p className="text-xl animate-pulse text-black text-center w-full">
+              Loading...
+            </p>
+          )}
+
+          {!loading &&
+            listing &&
+            listing.map((list) => (
+              <ListingItem key={list._id} listing={list} />
+            ))}
+        </div>
       </div>
     </div>
   );

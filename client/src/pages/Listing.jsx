@@ -19,14 +19,16 @@ import Contact from "@/components/Contact.jsx";
 
 const Listing = () => {
   const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true }, [
-    Autoplay({ playOnInit: false, delay: 2000 }),
+    Autoplay({ playOnInit: true, delay: 3000 }),
   ]);
 
   const params = useParams();
   const [listing, setListing] = useState(null);
+  console.log(listing?.imageUrls);
   const [loading, setLoading] = useState(true);
+  const [coverImage, setCoverImage] = useState("");
   const [error, setError] = useState(false);
-  const [isPlaying, setIsPlaying] = useState(false);
+  const [isPlaying, setIsPlaying] = useState(true);
   const [copied, setCopied] = useState(false);
   const [listingOwner, setListingOwner] = useState(null);
   const { currentUser } = useSelector((state) => state.user);
@@ -70,6 +72,7 @@ const Listing = () => {
           return;
         }
         setListing(data);
+        setCoverImage(data.imageUrls[0]);
         setListingOwner(data.userRef);
         setLoading(false);
       } catch (error) {
@@ -112,102 +115,123 @@ const Listing = () => {
           Something went wrong
         </p>
       )}
-      {listing && !loading && !error && (
-        <div>
-          <div className="embla relative" ref={emblaRef}>
-            <div className="embla__container">
-              {listing.imageUrls.map((url, index) => (
-                <div
-                  className="embla__slide"
-                  key={index}
-                  style={{
-                    backgroundImage: `url(${url})`,
-                    backgroundPosition: "center",
-                    backgroundSize: "cover",
-                  }}
-                ></div>
-              ))}
-            </div>
-            <div className="button-container absolute top-0 right-0 m-4">
-              {/* Position the autoplay button container */}
-              {isPlaying && (
-                <button
-                  onClick={toggleAutoplay}
-                  type="button"
-                  className="bg-white text-black p-2 rounded-full font-semibold"
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 24 24"
-                    fill="currentColor"
-                    class="w-6 h-6"
+      <div>
+        {listing && !loading && !error && (
+          <>
+            {listing.imageUrls.length === 1 ? (
+              <div
+                className="overflow-hidden items-center justify-center min-w-0 flex h-[550px]"
+                style={{
+                  backgroundImage: `url(${coverImage})`,
+                  backgroundPosition: "center",
+                  backgroundSize: "cover",
+                }}
+              ></div>
+            ) : (
+              // Render multiple images with buttons
+              <>
+                <div className="embla relative" ref={emblaRef}>
+                  <div className="embla__container">
+                    {listing.imageUrls.map((url, index) => (
+                      <div
+                        className="embla__slide"
+                        key={index}
+                        style={{
+                          backgroundImage: `url(${url})`,
+                          backgroundPosition: "center",
+                          backgroundSize: "cover",
+                        }}
+                      ></div>
+                    ))}
+                  </div>
+                  <div className="button-container absolute top-0 right-0 m-4">
+                    {/* Position the autoplay button container */}
+                    {isPlaying && (
+                      <button
+                        onClick={toggleAutoplay}
+                        type="button"
+                        className="bg-white text-black p-2 rounded-full font-semibold"
+                      >
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          viewBox="0 0 24 24"
+                          fill="currentColor"
+                          class="w-6 h-6"
+                        >
+                          <path
+                            fill-rule="evenodd"
+                            d="M6.75 5.25a.75.75 0 0 1 .75-.75H9a.75.75 0 0 1 .75.75v13.5a.75.75 0 0 1-.75.75H7.5a.75.75 0 0 1-.75-.75V5.25Zm7.5 0A.75.75 0 0 1 15 4.5h1.5a.75.75 0 0 1 .75.75v13.5a.75.75 0 0 1-.75.75H15a.75.75 0 0 1-.75-.75V5.25Z"
+                            clip-rule="evenodd"
+                          />
+                        </svg>
+                      </button>
+                    )}
+                    {!isPlaying && (
+                      <button
+                        onClick={toggleAutoplay}
+                        type="button"
+                        className="bg-white text-black p-2 rounded-full font-semibold"
+                      >
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          viewBox="0 0 24 24"
+                          fill="currentColor"
+                          class="w-6 h-6"
+                        >
+                          <path
+                            fill-rule="evenodd"
+                            d="M4.5 5.653c0-1.427 1.529-2.33 2.779-1.643l11.54 6.347c1.295.712 1.295 2.573 0 3.286L7.28 19.99c-1.25.687-2.779-.217-2.779-1.643V5.653Z"
+                            clip-rule="evenodd"
+                          />
+                        </svg>
+                      </button>
+                    )}
+                  </div>
+                  <button
+                    className="embla__prev absolute top-1/2 left-0 transform -translate-y-1/2 bg-white rounded-full m-2"
+                    onClick={scrollPrev}
                   >
-                    <path
-                      fill-rule="evenodd"
-                      d="M6.75 5.25a.75.75 0 0 1 .75-.75H9a.75.75 0 0 1 .75.75v13.5a.75.75 0 0 1-.75.75H7.5a.75.75 0 0 1-.75-.75V5.25Zm7.5 0A.75.75 0 0 1 15 4.5h1.5a.75.75 0 0 1 .75.75v13.5a.75.75 0 0 1-.75.75H15a.75.75 0 0 1-.75-.75V5.25Z"
-                      clip-rule="evenodd"
-                    />
-                  </svg>
-                </button>
-              )}
-              {!isPlaying && (
-                <button
-                  onClick={toggleAutoplay}
-                  type="button"
-                  className="bg-white text-black p-2 rounded-full font-semibold"
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 24 24"
-                    fill="currentColor"
-                    class="w-6 h-6"
+                    <MdNavigateBefore size={40} />{" "}
+                    {/* Material Icon for "Prev" */}
+                  </button>
+                  <button
+                    className="embla__next absolute top-1/2 right-0 transform -translate-y-1/2  bg-white rounded-full m-2"
+                    onClick={scrollNext}
                   >
-                    <path
-                      fill-rule="evenodd"
-                      d="M4.5 5.653c0-1.427 1.529-2.33 2.779-1.643l11.54 6.347c1.295.712 1.295 2.573 0 3.286L7.28 19.99c-1.25.687-2.779-.217-2.779-1.643V5.653Z"
-                      clip-rule="evenodd"
-                    />
-                  </svg>
-                </button>
-              )}
+                    <MdNavigateNext size={40} />{" "}
+                    {/* Material Icon for "Next" */}
+                  </button>
+                </div>
+              </>
+            )}
+            <div className="fixed bottom-4 right-4 z-10 border border-gray-400 rounded-full w-12 h-12 flex justify-center items-center bg-white cursor-pointer">
+              <FaShare
+                className="text-black"
+                onClick={() => {
+                  navigator.clipboard.writeText(window.location.href);
+                  setCopied(true);
+                  setTimeout(() => {
+                    setCopied(false);
+                  }, 2000);
+                }}
+              />
             </div>
-            <button
-              className="embla__prev absolute top-1/2 left-0 transform -translate-y-1/2 bg-white rounded-full m-2"
-              onClick={scrollPrev}
-            >
-              <MdNavigateBefore size={40} /> {/* Material Icon for "Prev" */}
-            </button>
-            <button
-              className="embla__next absolute top-1/2 right-0 transform -translate-y-1/2  bg-white rounded-full m-2"
-              onClick={scrollNext}
-            >
-              <MdNavigateNext size={40} /> {/* Material Icon for "Next" */}
-            </button>
-          </div>
-          <div className="fixed bottom-4 right-4 z-10 border border-gray-400 rounded-full w-12 h-12 flex justify-center items-center bg-white cursor-pointer">
-            <FaShare
-              className="text-black"
-              onClick={() => {
-                navigator.clipboard.writeText(window.location.href);
-                setCopied(true);
-                setTimeout(() => {
-                  setCopied(false);
-                }, 2000);
-              }}
-            />
-          </div>
-          {copied && (
-            <Alert className="fixed top-4 left-1/2 transform -translate-x-1/2 z-10 rounded-md bg-black text-white w-auto inline-flex flex-col justify-center items-center p-2">
-              <AlertTitle className="text-center">Link copied!</AlertTitle>
-              <AlertDescription className="text-center">
-                The link has been copied to the clipboard.
-              </AlertDescription>
-            </Alert>
-          )}
+            {copied && (
+              <Alert className="fixed top-4 left-1/2 transform -translate-x-1/2 z-10 rounded-md bg-black text-white w-auto inline-flex flex-col justify-center items-center p-2">
+                <AlertTitle className="text-center">Link copied!</AlertTitle>
+                <AlertDescription className="text-center">
+                  The link has been copied to the clipboard.
+                </AlertDescription>
+              </Alert>
+            )}
+          </>
+        )}
+
+        {listing && !loading && !error && (
           <div className="flex flex-col max-w-4xl mx-auto p-3 my-7 gap-3">
             <p className="text-2xl font-semibold flex gap-4">
               {listing.name} - ₹{""}
-              {listing.regularPrice.toLocaleString("en-US")}
+              {listing.regularPrice.toLocaleString("en-IN")}
               {listing.type === "rent" && " / month"}
               {currentUser && listingOwner === currentUser._id && (
                 <Link to={`/update-listing/${listing._id}`}>
@@ -225,7 +249,19 @@ const Listing = () => {
               )}
             </p>
             <p className="flex items-center mt-2 gap-2 text-slate-600  text-sm">
-              <FaMapMarkerAlt className="text-green-700" />
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                fill="black"
+                class="w-5 h-5"
+              >
+                <path
+                  fill-rule="evenodd"
+                  d="m11.54 22.351.07.04.028.016a.76.76 0 0 0 .723 0l.028-.015.071-.041a16.975 16.975 0 0 0 1.144-.742 19.58 19.58 0 0 0 2.683-2.282c1.944-1.99 3.963-4.98 3.963-8.827a8.25 8.25 0 0 0-16.5 0c0 3.846 2.02 6.837 3.963 8.827a19.58 19.58 0 0 0 2.682 2.282 16.975 16.975 0 0 0 1.145.742ZM12 13.5a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z"
+                  clip-rule="evenodd"
+                />
+              </svg>
+
               {listing.address}
             </p>
             <div className="flex gap-4 mb-3">
@@ -287,8 +323,8 @@ const Listing = () => {
             )}
             {contact && <Contact listing={listing} />}
           </div>
-        </div>
-      )}
+        )}
+      </div>
     </main>
   );
 };
